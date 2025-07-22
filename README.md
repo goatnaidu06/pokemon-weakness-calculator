@@ -6,7 +6,7 @@ A Python-based terminal utility that calculates **weaknesses, resistances, and i
 
 - Calculates type effectiveness for a specific Pokémon
 - Supports dual-type combinations
-- Accepts alternate forms (e.g., Mega, Alolan, Galarian) [WIP]
+- Accepts alternate forms (optional or required for some Pokémon)
 - Displays weaknesses, resistances, quad-weaknesses, immunities, and a defensive score
 - Clean and simple command-line interface (CLI)
 - Uses `pandas` for formatted table output
