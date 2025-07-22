@@ -1,37 +1,35 @@
-# Pokémon Type Effectiveness Calculator
+# Pokémon Weakness Calculator
 
-A Python-based terminal utility that calculates type effectiveness between Pokémon types, supporting offensive and defensive interactions. This project is designed to help users understand the complex relationships between the 18 Pokémon types, including dual-type calculations and form-specific support.
+A Python-based terminal utility that calculates **weaknesses, resistances, and immunities** for a particular Pokémon, including support for alternate forms like Mega Evolutions, Alolan forms, etc. This tool is designed to help users understand the defensive matchups of any Pokémon based on its typing.
 
 ## 🔍 Features
 
-- Calculates type effectiveness using a standard type chart  
-- Supports both attacking and defending scenarios  
-- Handles dual-type combinations  
-- Simple command-line interface (CLI)  
-- Easy-to-read pandas DataFrame output  
-- Built-in support for adding forms (e.g., regional forms) [WIP]
+- Calculates type effectiveness for a specific Pokémon
+- Supports dual-type combinations
+- Accepts alternate forms (e.g., Mega, Alolan, Galarian) [WIP]
+- Displays weaknesses, resistances, quad-weaknesses, immunities, and a defensive score
+- Clean and simple command-line interface (CLI)
+- Uses `pandas` for formatted table output
 
 ## 📁 File Structure
 
 ```
-pkmnTypeCalc.py     # Main script for calculating type effectiveness  
-Pokemon.csv           # (Expected) CSV file to load Pokémon type and form data (optional extension)  
+pkmnTypeCalc.py     # Main script for calculating type weaknesses  
+Pokemon.csv         # CSV dataset containing Pokémon names, types, and form data  
 README.md           # Project documentation  
 ```
 
 ## 🧠 How It Works
 
-The program uses a dictionary-based matrix where:  
-- Keys = Attacking type names  
-- Values = List of effectiveness multipliers against 18 defending types (in order)  
+The script loads type data from a dictionary matrix and looks up Pokémon type combinations from the `Pokemon.csv` file. It then calculates how that Pokémon fares defensively against each of the 18 attack types.
 
-These values follow standard Pokémon game mechanics (e.g., Fire is 2× against Grass, 0.5× against Water, etc.).
+Type effectiveness follows official Pokémon game logic:
 
-Sample output shows effectiveness multipliers like:  
-```
-Against Flying: 0.5×  
-Against Steel: 2.0×  
-```
+- 2x = Weakness  
+- 0.5x = Resistance  
+- 0.25x = Quad-resistance  
+- 4x = Quad-weakness  
+- 0x = Immunity  
 
 ## 🚀 Getting Started
 
@@ -44,8 +42,6 @@ cd pokemon-type-calculator
 
 ### 2. Install Dependencies
 
-This project requires `pandas`:
-
 ```bash
 pip install pandas  
 ```
@@ -56,29 +52,31 @@ pip install pandas
 python3 pkmnTypeCalc.py  
 ```
 
-Follow the prompts to enter:  
-- Attack type  
-- One or two defense types (e.g., Water, Flying)  
+Follow the prompts to enter:
+- **Pokémon name**
+- **Form** (optional — e.g., Mega Blastoise, Galarian Meowth, Hisuian Arcanine, etc.)
 
 ## 📝 Example Usage
 
 ```
-Enter attack type: Electric  
-Enter defense type 1: Flying  
-Enter defense type 2 (or press enter if none): Water  
+Enter Pokémon name: Charizard  
+Enter form (leave blank if none): Mega Charizard X  
 
-Type effectiveness:  
-Electric vs Flying: 2.0×  
-Electric vs Water: 2.0×  
-Total effectiveness: 4.0×  
+Charizard (Mega Charizard X), which is a dual-type Fire/Dragon Pokémon from the Kalos region (Generation 6), has:
+- 0 quad-weaknesses (4x damage from): None  
+- 3 weaknesses (2x damage from): Dragon, Ground, Rock  
+- 3 resistances (0.5x damage from): Bug, Electric, Steel  
+- 2 quad-resistances (0.25x damage from): Fire, Grass  
+- 0 immunities (zero effect from): None  
+Defensive Score: 62.5%
 ```
 
 ## 🎯 Future Improvements
 
-- Add support for Pokémon forms (e.g., Alolan, Galarian)  
-- GUI interface (Tkinter or web)  
-- Pokémon name-based type lookup  
-- Unit tests and test coverage  
+- Expand support for all regional forms
+- Add offensive calculator mode
+- Pokédex-style formatting with generation and region filters
+- GUI or web interface using Streamlit or Flask
 
 ## 📜 License
 
