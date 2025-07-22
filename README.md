@@ -15,7 +15,7 @@ A Python-based terminal utility that calculates type effectiveness between Poké
 
 ```
 pkmnTypeCalc.py     # Main script for calculating type effectiveness  
-types.csv           # (Expected) CSV file to load Pokémon type and form data (optional extension)  
+Pokemon.csv           # (Expected) CSV file to load Pokémon type and form data (optional extension)  
 README.md           # Project documentation  
 ```
 
