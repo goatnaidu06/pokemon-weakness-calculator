@@ -14,7 +14,7 @@ A Python-based terminal utility that calculates **weaknesses, resistances, and i
 ## 📁 File Structure
 
 ```
-pkmnTypeCalc.py     # Main script for calculating type weaknesses  
+pkmnWeaknessCalc.py     # Main script for calculating type weaknesses  
 Pokemon.csv         # CSV dataset containing Pokémon names, types, and form data  
 README.md           # Project documentation  
 ```
@@ -36,8 +36,8 @@ Type effectiveness follows official Pokémon game logic:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/goatnaidu06/pokemon-type-calculator.git  
-cd pokemon-type-calculator  
+git clone https://github.com/goatnaidu06/pokemon-weakness-calculator.git  
+cd pokemon-weakness-calculator  
 ```
 
 ### 2. Install Dependencies
@@ -49,7 +49,7 @@ pip install pandas
 ### 3. Run the Program
 
 ```bash
-python3 pkmnTypeCalc.py  
+python3 pkmnWeaknessCalc.py  
 ```
 
 Follow the prompts to enter:
