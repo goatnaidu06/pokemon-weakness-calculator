@@ -16,7 +16,8 @@ A Python-based terminal utility that calculates **weaknesses, resistances, and i
 ```
 pkmnWeaknessCalc.py     # Main script for calculating type weaknesses  
 Pokemon.csv         # CSV dataset containing Pokémon names, types, and form data  
-README.md           # Project documentation  
+README.md           # Project documentation
+LICENSE.txt           # Project license
 ```
 
 ## 🧠 How It Works
