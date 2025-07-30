@@ -81,7 +81,7 @@ Defensive Score: 62.5%
 
 ## 📜 License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](LICENSE.txt) for details.
 
 ## 👨‍💻 Author
 
