@@ -37,7 +37,7 @@ df = pd.DataFrame(pokemon, index=pokemon.keys()).T
 
 
 
-data_url = 'https://raw.githubusercontent.com/lgreski/pokemonData/refs/heads/master/Pokemon.csv'
+data_url = 'https://raw.githubusercontent.com/goatnaidu06/pokemon-weakness-calculator/refs/heads/main/Pokemon.csv'
 poke_df = pd.read_csv(data_url)
 poke_df.columns = poke_df.columns.str.strip()
 poke_df['Form'] = poke_df['Form'].fillna('').str.strip()
