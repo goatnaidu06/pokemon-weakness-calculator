@@ -74,8 +74,8 @@ pokemon_g1 = {
 
 # Create DataFrame with offense types as rows and defense types as columns
 df = pd.DataFrame(pokemon, index=pokemon.keys()).T
-df_g1 = pd.DataFrame(pokemon_g1, index=pokemon.keys()).T
-df_g25 = pd.DataFrame(pokemon_g25, index=pokemon.keys()).T
+df_g1 = pd.DataFrame(pokemon_g1, index=pokemon_g1.keys()).T
+df_g25 = pd.DataFrame(pokemon_g25, index=pokemon_g25.keys()).T
 
 data_url = 'https://raw.githubusercontent.com/goatnaidu06/pokemon-weakness-calculator/refs/heads/main/Pokemon.csv'
 poke_df = pd.read_csv(data_url)
