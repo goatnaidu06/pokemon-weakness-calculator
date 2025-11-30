@@ -7,6 +7,7 @@ Created on Mon Jul 21 17:24:48 2025
 """
 
 import pandas as pd
+import customtkinter as ctk
 
 # Type effectiveness chart (Offense types as rows, Defense types as columns)
 pokemon = {
@@ -104,7 +105,7 @@ def get_pokemon_weaknesses(pokemon_name, form_name=None, gen_filter=None):
         pokemon = base[base['Form'] == '']
 
     if pokemon.empty:
-        return "Error: Pokémon not found."
+        return {"ok": False, "error":"Error: Pokémon not found."}
 
     # Basic info from CSV
     gen = int(pokemon.iloc[0]['Generation'])
@@ -131,15 +132,15 @@ def get_pokemon_weaknesses(pokemon_name, form_name=None, gen_filter=None):
         try:
             gen_filter = int(gen_filter)
         except ValueError:
-            return "Error: Generation filter must be an integer between 1 and 9."
+            return {"ok": False, "error": "Error: Generation filter must be an integer between 1 and 9."}
 
         if gen_filter < 1 or gen_filter > 9:
-            return "Error: Generation filter must be between 1 and 9."
+            return {"ok": False, "error":"Error: Generation filter must be between 1 and 9."}
 
         # If the Pokémon wasn't introduced yet in that generation → invalid
         if gen > gen_filter:
-            return (f"Error: {display_name} is from Generation {gen}, "
-                    f"so it does not exist in Generation {gen_filter}.")
+            return {"ok": False, "error": (f"Error: {display_name} is from Generation {gen}, "
+                    f"so it does not exist in Generation {gen_filter}.")}
 
     # --- Choose which type chart to use ---
     if gen_filter == 1:
@@ -162,8 +163,8 @@ def get_pokemon_weaknesses(pokemon_name, form_name=None, gen_filter=None):
     # --- Safety: make sure resulting types exist in this chart ---
     for t in [type1, type2]:
         if t is not None and t not in chart.columns:
-            return (f"Error: Type '{t}' does not exist in the Generation {gen_filter} "
-                    f"type chart (after pre-Gen 6 conversion).")
+            return {"ok": False, "error": (f"Error: Type '{t}' does not exist in the Generation {gen_filter} "
+                    f"type chart (after pre-Gen 6 conversion).")}
 
     # --- Compute combined effectiveness using the chosen chart ---
     if type2 is None or type2 == " ":
@@ -207,42 +208,185 @@ def get_pokemon_weaknesses(pokemon_name, form_name=None, gen_filter=None):
         region = "Paldea"
     else:
         region = "Unknown"
+    
+    #return output for our text helper function to format the results for the UI
+    return {
+        "ok": True,
+        "pokemon_name": pokemon_name,
+        "form": form,
+        "display_name": display_name,
+        "region": region,
+        "gen": gen,
+        "type1": type1,
+        "type2": type2,
+        "weaknessesquad": weaknessesquad,
+        "weaknesses": weaknesses,
+        "resistances": resistances,
+        "resistancesquad": resistancesquad,
+        "immunities": immunities,
+        "defensive_score_single": round(defensivescore1, 2),
+        "defensive_score_dual": round(defensivescore2, 2),
+        "used_chart_gen": gen_filter,
+    }
 
-    display_name = f"{pokemon_name} ({form})" if form else pokemon_name
-
-    # --- Output ---
+# Text formatter that turns original printed text that can be called by the customtkinter UI
+def format_result_text(result: dict) -> str:
+    if not result.get("ok", False):
+        return result.get("error", "Unknown error")\
+    
+    # Creating variables for pokemon weakness results
+    name = result["display_name"]
+    region = result["region"]
+    gen = result["gen"]
+    type1 = result["type1"]
+    type2 = result["type2"]
+    weaknessesquad = result["weaknessesquad"]
+    weaknesses = result["weaknesses"]
+    resistances = result["resistances"]
+    resistancesquad = result["resistancesquad"]
+    immunities = result["immunities"]
+    defensivescore1 = result["defensive_score_single"]
+    defensivescore2 = result["defensive_score_dual"]
+    
+    # How we store our text formatting
+    lines = []
+    
+    # Single types:
     if type2 is None or type2 == " ":
-        # Special “an Ice/Electric” grammar
-        if type1 in ("Ice", "Electric"):
-            print(f"{display_name}, which is an {type1}-type Pokémon from the {region} region (Generation {gen}), has:")
-        else:
-            print(f"{display_name}, which is a {type1}-type Pokémon from the {region} region (Generation {gen}), has:")
-
-        print(f"- {len(weaknesses)} weaknesses (2x damage from): {', '.join(weaknesses) if weaknesses else 'None'}")
-        print(f"- {len(resistances)} resistances (0.5x damage from): {', '.join(resistances) if resistances else 'None'}")
-        print(f"- {len(immunities)} immunities (zero effect from): {', '.join(immunities) if immunities else 'None'}")
-        print(f"Defensive Score: {round(defensivescore1, 2)}%")
+        # Determining whether to use a or an depending on the type
+        article = "an" if type1 in ("Ice", "Electric") else "a"
+        
+        lines.append(f"{name}, which is {article} {type1}-type Pokémon from {region} (Generation {gen}), has:")
+        lines.append(f"- Weaknesses: {', '.join(weaknesses) if weaknesses else 'None'}")
+        lines.append(f"- Resistances: {', '.join(resistances) if resistances else 'None'}")
+        lines.append(f"- Immunities: {', '.join(immunities) if immunities else 'None'}")
+        lines.append(f"- Defensive Score: {round(defensivescore1, 2)}%")
+    
+    # Dual Types:
+    
     else:
-        print(f"{display_name}, which is a dual-type {type1}/{type2} Pokémon from the {region} region (Generation {gen}), has:")
-        print(f"- {len(weaknessesquad)} quad-weaknesses (4x damage from): {', '.join(weaknessesquad) if weaknessesquad else 'None'}")
-        print(f"- {len(weaknesses)} weaknesses (2x damage from): {', '.join(weaknesses) if weaknesses else 'None'}")
-        print(f"- {len(resistances)} resistances (0.5x damage from): {', '.join(resistances) if resistances else 'None'}")
-        print(f"- {len(resistancesquad)} quad-resistances (0.25x damage from): {', '.join(resistancesquad) if resistancesquad else 'None'}")
-        print(f"- {len(immunities)} immunities (zero effect from): {', '.join(immunities) if immunities else 'None'}")
-        print(f"Defensive Score: {round(defensivescore2, 2)}%")
+        lines.append(f"{name}, which is a dual-type {type1}/{type2} Pokémon from {region} (Generation {gen}), has:")
+        lines.append(f"- Quad Weaknesses: {', '.join(weaknessesquad) if weaknessesquad else 'None'}")
+        lines.append(f"- Weaknesses: {', '.join(weaknesses) if weaknesses else 'None'}")
+        lines.append(f"- Resistances: {', '.join(resistances) if resistances else 'None'}")
+        lines.append(f"- Quad Resistances: {', '.join(resistancesquad) if resistancesquad else 'None'}")
+        lines.append(f"- Immunities: {', '.join(immunities) if immunities else 'None'}")
+        lines.append(f"- Defensive Score: {round(defensivescore2, 2)}%")
+    
+    return "\n".join(lines)
+
+# Appearance settings
+ctk.set_appearance_mode("dark")         # "light" or "dark"
+ctk.set_default_color_theme("dark-blue")     # "blue", "green", "dark-blue"
+class PokemonWeaknessApp(ctk.CTk):
+
+    def __init__(self):
+        # Constructor to create UI
+        super().__init__()
+
+        # Creating window title and original size
+        self.title("Pokémon Weakness Calculator")
+        self.geometry("700x500")
+
+        # Makes sure column and output box adjust with manual window adjustments 
+        self.grid_columnconfigure(0, weight = 1)
+        self.grid_rowconfigure(3, weight = 1)
+
+        # ---- Title (row 0) ----
+        title_label = ctk.CTkLabel(
+            self,
+            text = "Pokémon Weakness Calculator", # Setting text of label
+            font = ctk.CTkFont(family = "Segoe UI", size = 22, weight = "bold") # Setting font
+        )
+        
+        # All widgets are customized through .grid:
+        #   1. row / column -> where the widget resides
+        #   2. padx / pady -> how much empty space around the widget
+        #   3. sticky -> which sides the widget attaches to
+        
+        title_label.grid(row = 0, column = 0, padx = 20, pady = (20, 10), sticky = "w")
+
+        # ---- Input frame (row 1) ----
+        frame = ctk.CTkFrame(self)
+        frame.grid(row = 1, column = 0, padx = 20, pady = 10, sticky = "ew")
+        frame.grid_columnconfigure(1, weight = 1)
+
+        # Pokémon name
+        name_label = ctk.CTkLabel(frame, text = "Pokémon name:")
+        name_label.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = "e")
+
+        self.name_entry = ctk.CTkEntry(frame, placeholder_text = "e.g. Pikachu")
+        self.name_entry.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = "ew")
+
+        # Form (optional)
+        form_label = ctk.CTkLabel(frame, text = "Form (optional):")
+        form_label.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = "e")
+
+        self.form_entry = ctk.CTkEntry(frame, placeholder_text = "blank = no form")
+        self.form_entry.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = "ew")
+
+        # Generation filter
+        gen_label = ctk.CTkLabel(frame, text = "Generation filter (1–9):")
+        gen_label.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = "e")
+
+        self.gen_entry = ctk.CTkEntry(frame, placeholder_text = "blank = Pokémon's first introduced gen")
+        self.gen_entry.grid(row = 2, column = 1, padx = 5, pady = 5, sticky = "ew")
+
+        # ---- Calculate button (row 2) ----
+        calc_button = ctk.CTkButton(
+            self,
+            text = "Calculate",
+            command = self.on_calculate
+        )
+        calc_button.grid(row = 2, column = 0, padx = 20, pady = 10, sticky = "ew")
+
+        # ---- Output box (row 3) ----
+        self.output_box = ctk.CTkTextbox(
+            self,
+            wrap = "word",
+            font = ctk.CTkFont(family="Segoe UI", size = 15)
+        )
+        
+
+        # Insert output box in the third row
+        self.output_box.grid(row = 3, column = 0, padx = 20, pady = (5, 20), sticky = "nsew")
+
+        # Prevents typing inside output box
+        self.output_box.configure(state = "disabled")
+
+    def on_calculate(self):
+        name = self.name_entry.get().strip()
+        form_text = self.form_entry.get().strip()
+        gen_text = self.gen_entry.get().strip()
+
+        form = form_text if form_text != "" else None
+
+        # Handle generation input
+        gen_filter = None
+        if gen_text != "":
+            try:
+                gen_filter = int(gen_text)
+            except ValueError:
+                error_result = {"ok": False, "error": "Error: Generation filter must be an integer 1–9."}
+                text = format_result_text(error_result)
+                self.show_text(text)
+                return
+
+        # Calls original logic
+        result = get_pokemon_weaknesses(name, form, gen_filter)
+
+        text = format_result_text(result)  # Formats logic into text
+        self.show_text(text)               # Displays text in output box
+
+    def show_text(self, text: str):
+        """Utility to update the read-only output textbox."""
+        self.output_box.configure(state = "normal")   # temporarily editable
+        self.output_box.delete("1.0", "end")          # clear previous text
+        self.output_box.insert("1.0", text)           # insert new text
+        self.output_box.configure(state = "disabled") # lock again
 
 
-
-# Example Usage
-pokemon_name = input("Enter Pokémon name: ")
-form_name = input("Enter form (leave blank if none): ")
-gen_input = input("Generation filter (1–9, leave blank to use Pokémon's own gen): ").strip()
-
-gen_filter = int(gen_input) if gen_input else None
-
-result = get_pokemon_weaknesses(
-    pokemon_name,
-    form_name if form_name else None,
-    gen_filter
-)
-print(result)
+# Loop to run code
+if __name__ == "__main__":
+    app = PokemonWeaknessApp()
+    app.mainloop()
