@@ -1,6 +1,6 @@
 # Pokémon Weakness Calculator
 
-A Python-based terminal utility that calculates **weaknesses, resistances, and immunities** for a particular Pokémon, including support for alternate forms like Mega Evolutions, Alolan forms, etc. This tool is designed to help users understand the defensive matchups of any Pokémon based on its typing.
+A Python-based GUI application using CustomTkinter that calculates **weaknesses, resistances, and immunities** for a particular Pokémon, including support for alternate forms like Mega Evolutions, Alolan forms, etc. This tool is designed to help users understand the defensive matchups of any Pokémon based on its typing.
 
 ## 🔍 Features
 
