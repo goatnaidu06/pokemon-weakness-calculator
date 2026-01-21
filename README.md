@@ -8,6 +8,7 @@ A Python-based terminal utility that calculates **weaknesses, resistances, and i
 - Supports dual-type combinations
 - Accepts alternate forms (optional or required for some Pokémon)
 - Displays weaknesses, resistances, quad-weaknesses, immunities, and a defensive score
+- Defensive Score is a heuristic metric based on resistances vs weaknesses and is not an official game stat.
 - Clean and simple command-line interface (CLI)
 - Uses `pandas` for formatted table output
 
