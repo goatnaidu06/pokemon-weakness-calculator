@@ -255,7 +255,7 @@ def format_result_text(result: dict) -> str:
     # Single types:
     if type2 is None or type2 == " ":
         # Determining whether to use a or an depending on the type
-        article = "an" if type1 in ("Ice", "Electric") else "a"
+        article = "an" if type1[0] in "AEIOU" else "a"
         
         lines.append(f"{name}, which is {article} {type1}-type Pokémon from {region} (Generation {gen}), has:")
         lines.append(f"- Weaknesses: {', '.join(weaknesses) if weaknesses else 'None'}")
